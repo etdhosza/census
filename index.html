@@ -26,7 +26,7 @@ html, body {
   background: var(--navy);
   color: var(--white);
   font-family: 'DM Sans', sans-serif;
-  overflow: hidden;
+  overflow: auto;
 }
 
 /* ── Background grid ── */
@@ -331,8 +331,62 @@ body::after {
 .app-title     { animation: fadeUp 0.5s ease 0.15s both; }
 .app-sub       { animation: fadeUp 0.5s ease 0.2s both; }
 .launch-btn    { animation: fadeUp 0.5s ease 0.25s both; }
-.countdown-wrap{ animation: fadeUp 0.5s ease 0.3s both; }
-.info-row      { animation: fadeUp 0.5s ease 0.35s both; }
+.info-row      { animation: fadeUp 0.5s ease 0.3s both; }
+
+/* ── Mobile ── */
+@media (max-width: 600px) {
+  .shell {
+    height: auto;
+    min-height: 100dvh;
+    padding: 80px 16px 40px;
+    justify-content: flex-start;
+  }
+  .topbar {
+    padding: 12px 16px;
+  }
+  .hosp-name {
+    font-size: 11px;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .topbar-right { display: none; }
+  .card {
+    padding: 32px 22px;
+    border-radius: 14px;
+  }
+  .app-title {
+    font-size: 28px;
+  }
+  .app-sub {
+    font-size: 13px;
+    margin-bottom: 28px;
+  }
+  .app-sub br { display: none; }
+  .launch-btn {
+    font-size: 15px;
+    padding: 15px 24px;
+  }
+  .info-row {
+    margin-top: 24px;
+  }
+  .info-cell {
+    padding: 10px 12px;
+  }
+  .info-cell .val {
+    font-size: 11px;
+    word-break: break-all;
+  }
+  .admin-note {
+    position: static;
+    transform: none;
+    margin-top: 20px;
+    padding: 0 16px;
+    text-align: center;
+    white-space: normal;
+  }
+}
 
 </style>
 </head>
@@ -371,19 +425,6 @@ body::after {
       Open Census App <span class="btn-arrow">→</span>
     </a>
 
-    <div class="countdown-wrap">
-      <div class="countdown-ring">
-        <svg width="28" height="28" viewBox="0 0 28 28">
-          <circle cx="14" cy="14" r="11"/>
-          <circle class="progress" id="progressRing" cx="14" cy="14" r="11"/>
-        </svg>
-      </div>
-      <span class="countdown-text">
-        Redirecting in <b id="countNum">8</b>s
-      </span>
-      <button class="skip-link" onclick="redirect()">Open now</button>
-    </div>
-
     <div class="info-row">
       <div class="info-cell">
         <div class="lbl">Department</div>
@@ -414,46 +455,15 @@ const APP_URL      = 'https://script.google.com/a/macros/unisza.edu.my/s/AKfycby
 const VERSION      = '1.0';
 const LAST_UPDATED = '2026-05-08'; // update this date when you redeploy
 const DOMAIN       = 'unisza.edu.my';
-const COUNTDOWN    = 6; // seconds before auto-redirect
 // ════════════════════════════════════════════════════
 
 // Apply config
 document.getElementById('launchBtn').href = APP_URL;
 document.getElementById('versionLabel').textContent = `v${VERSION} — Live`;
 document.getElementById('domainLabel').textContent = `@${DOMAIN}`;
-document.getElementById('lastUpdated').textContent = new Date(LAST_UPDATED)
-  .toLocaleDateString('en-MY', {day:'2-digit', month:'short', year:'numeric'});
-
-// Live clock
-function updateClock() {
-  const now = new Date();
-  document.getElementById('liveClock').textContent =
-    now.toLocaleTimeString('en-MY', {hour:'2-digit', minute:'2-digit', second:'2-digit'}) +
-    ' MYT';
-}
-updateClock();
-setInterval(updateClock, 1000);
-
-// Countdown + redirect
-const circumference = 2 * Math.PI * 11; // r=11
-let remaining = COUNTDOWN;
-const ring = document.getElementById('progressRing');
-const num  = document.getElementById('countNum');
-
-ring.style.strokeDasharray  = circumference;
-ring.style.strokeDashoffset = 0;
-
-const timer = setInterval(() => {
-  remaining--;
-  num.textContent = remaining;
-  ring.style.strokeDashoffset = circumference * (1 - remaining / COUNTDOWN);
-  if (remaining <= 0) { clearInterval(timer); redirect(); }
-}, 1000);
-
-function redirect() {
-  clearInterval(timer);
-  window.open(APP_URL, '_blank');
-}
+const [dy, dm, dd] = LAST_UPDATED.split('-');
+const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+document.getElementById('lastUpdated').textContent = `${dd} ${months[parseInt(dm)-1]} ${dy}`;
 </script>
 </body>
 </html>
